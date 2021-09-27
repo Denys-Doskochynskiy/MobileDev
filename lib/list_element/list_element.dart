@@ -1,11 +1,28 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class _RandomWordsState extends State<RandomWords> {
   final _suggestions = <WordPair>[];
   final _saved = <WordPair>{};
-  final _biggerFont = const TextStyle(fontSize: 18.0);
+
+
+  launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url, forceWebView: true);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  Widget buildFloatingButton() => FloatingActionButton(
+        onPressed: () {
+          launch(
+              "https://www.youtube.com/watch?v=13kvPXrCJIw&ab_channel=FreshAvocado");
+        },
+        child: const Icon(Icons.search),
+      );
 
   void _pushSaved() {
     Navigator.of(context).push(
@@ -17,12 +34,26 @@ class _RandomWordsState extends State<RandomWords> {
               return ListTile(
                 title: Text(
                   pair.asPascalCase,
-                  style: _biggerFont,
+                  style: TextStyle(fontSize: 18.0),
                 ),
                 trailing: Icon(
-                  alreadySaved ? Icons.favorite : Icons.favorite_border,
-                  color: alreadySaved ? Colors.red : null,
+                  alreadySaved ? Icons.remove_circle : Icons.favorite_border,
+                  color: alreadySaved ? Colors.grey : null,
                 ),
+                onTap: () {
+                  setState(() {
+                    if (alreadySaved) {
+                      _saved.remove(pair);
+                      Navigator.of(context).pop();
+                      _pushSaved();
+                    }
+                  });
+                  if (_saved.length == 0) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Це кінець, чи лише початок?"),
+                    ));
+                  }
+                },
               );
             },
           );
@@ -35,6 +66,7 @@ class _RandomWordsState extends State<RandomWords> {
               title: Text('Saved Suggestions'),
             ),
             body: ListView(children: divided),
+            floatingActionButton: buildFloatingButton(),
           );
         },
       ),
@@ -61,14 +93,13 @@ class _RandomWordsState extends State<RandomWords> {
     return ListTile(
       title: Text(
         editPair,
-        style: _biggerFont,
+        style: TextStyle(fontSize: 18.0),
       ),
       trailing: Icon(
         alreadySaved ? Icons.favorite : Icons.favorite_border,
         color: alreadySaved ? Colors.red : null,
       ),
       onTap: () {
-
         setState(() {
           if (alreadySaved) {
             _saved.remove(pair);
