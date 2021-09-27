@@ -6,7 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 class _RandomWordsState extends State<RandomWords> {
   final _suggestions = <WordPair>[];
   final _saved = <WordPair>{};
-  final _biggerFont = const TextStyle(fontSize: 18.0);
+
 
   launchURL(String url) async {
     if (await canLaunch(url)) {
@@ -34,7 +34,7 @@ class _RandomWordsState extends State<RandomWords> {
               return ListTile(
                 title: Text(
                   pair.asPascalCase,
-                  style: _biggerFont,
+                  style: TextStyle(fontSize: 18.0),
                 ),
                 trailing: Icon(
                   alreadySaved ? Icons.remove_circle : Icons.favorite_border,
@@ -93,7 +93,7 @@ class _RandomWordsState extends State<RandomWords> {
     return ListTile(
       title: Text(
         editPair,
-        style: _biggerFont,
+        style: TextStyle(fontSize: 18.0),
       ),
       trailing: Icon(
         alreadySaved ? Icons.favorite : Icons.favorite_border,
